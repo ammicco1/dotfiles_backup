@@ -56,7 +56,7 @@ int main(int argc, char **argv){
         }       
     }
 
-    /*args[0] = "git";
+    args[0] = "git";
     args[1] = "add";
     args[2] = "-A";
             
@@ -95,7 +95,7 @@ int main(int argc, char **argv){
         execv("/usr/bin/git", args);
     }
 
-    wait(NULL);*/
+    wait(NULL);
 
     return 0;
 }
