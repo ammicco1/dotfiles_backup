@@ -78,7 +78,7 @@ int main(int argc, char **argv){
 
     if(pid == 0){
         fprintf(stderr, ANSI_GREEN ANSI_BOLD "\xE2\x9C\x94 " ANSI_RESET);
-        fprintf(stderr, "Exec: git commit -m \"message\".\n");
+        fprintf(stderr, "Exec: git commit -m \"%s\".\n", commmit_msg);
         execv("/usr/bin/git", args);
     }
 
