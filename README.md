@@ -10,3 +10,9 @@ An example:
     $ make # compile the program
     $ ./main $(find ~ -maxdepth 1 -type f -name ".*") # backup all dotfiles in the home directory
 ```
+
+If you call the program without arguments it call: 
+ - git add -A
+ - git commit -m "Update dotfiles, date: Day-Mounth-Year Hours:Minutes:Seconds"
+ - git push
+
