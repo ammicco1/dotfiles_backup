@@ -7,7 +7,6 @@
 
 #include "./manipulate_string.h"
 
-#define FILENAMES "file_list"
 #define _MAXNAMELEN_ 255
 
 #define ANSI_RESET  "\x1b[0m"
@@ -21,13 +20,11 @@ int __size(char **);
 
 int main(int argc, char **argv){
     int i, pid;
-    char ch = '-';
+    char ch;
     char *filename = (char *) malloc(sizeof(char) * _MAXNAMELEN_);
     char *args[5];
-    char *file, *tmp;
+    char *file;
     char *commmit_msg = (char *) malloc(sizeof(char) * 44);
-
-    FILE *f = fopen(FILENAMES, "a"); 
 
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
@@ -56,42 +53,42 @@ int main(int argc, char **argv){
                 }
 
                 wait(NULL);
-
-                tmp = (char *) malloc(sizeof(char) * strlen(file));
-
-                strcpy(tmp, file);
-                strcat(tmp, "\n");
-                fwrite(file, sizeof(char) * strlen(file) , 1, f);
             }else{
                 fprintf(stderr, ANSI_RED ANSI_BOLD "X " ANSI_RESET);
                 fprintf(stderr, "File ./%s already exists.\nDo you want to rename it? (y/n): ", file);
 
-                fread(&ch, sizeof(char), 1, stdin);
+                scanf(" %c", &ch);
 
-                while(ch != 'y' && ch != 'n' && ch != '-'){
+                while(ch != 'y' && ch != 'n'){
                     fprintf(stderr, ANSI_RED ANSI_BOLD "X " ANSI_RESET);
                     fprintf(stderr, "Wrong choise, do you want to rename the file? (y/n): ");
-                    fread(&ch, sizeof(char), 1, stdin);
+                
+                    scanf(" %c", &ch);
                 }
 
-                if(ch == 'y' || ch == '-'){
+                if(ch == 'y'){
                     sprintf(filename, "./%s-%s", split(argv[i], '/')[__size(split(argv[i], '/')) - 2], file);
-                    
-                    args[0] = "ln";
-                    args[1] = argv[i];
-                    args[2] = filename;
-                
-                    pid = fork();
 
-                    if(pid == 0){
-                        fprintf(stderr, "Link %s in the repo directory.\n", file);
-                        execv("/usr/bin/ln", args);
+                    if(access(filename, 0) == 0){
+                        fprintf(stderr, ANSI_RED ANSI_BOLD "X " ANSI_RESET);
+                        fprintf(stderr, "File %s already exists.\n", filename);
+                    }else{
+                        args[0] = "ln";
+                        args[1] = argv[i];
+                        args[2] = filename;
+
+                        pid = fork();
+
+                        if(pid == 0){
+                            fprintf(stderr, "Link %s in the repo directory.\n", file);
+                            execv("/usr/bin/ln", args);
+                        }
+
+                        wait(NULL);
+
+                        fprintf(stderr, ANSI_GREEN ANSI_BOLD "\xE2\x9C\x94 " ANSI_RESET);
+                        fprintf(stderr, "Ok, file renamed.\n");
                     }
-
-                    wait(NULL);
-                    
-                    fprintf(stderr, ANSI_GREEN ANSI_BOLD "\xE2\x9C\x94 " ANSI_RESET);
-                    fprintf(stderr, "Ok, file renamed.\n");
                 }else{
                     fprintf(stderr, ANSI_RED ANSI_BOLD "X " ANSI_RESET);
                     fprintf(stderr, "Ok, ignore the file.\n");
